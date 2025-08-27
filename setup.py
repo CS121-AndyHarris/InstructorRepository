@@ -4,6 +4,7 @@ import os
 from cryptography.fernet import Fernet
 import base64
 import Exceptions
+import time
 
 if __name__ == "__main__":
     COURSE_ID = os.getenv("COURSE_ID")
@@ -193,6 +194,7 @@ def createRepositories():
             response = requests.post(url,headers=headers,json=payload)
             
             if Exceptions.validateStatusCode(response.status_code,"GitHub"):
+                time.sleep(2)
                 addWorkFlowFile(orgName,repositoryName)
                 addRepositoryVariable(assignment,orgName,repositoryName)
 
