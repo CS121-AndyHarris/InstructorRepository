@@ -180,7 +180,7 @@ def createRepositories():
             payload = {
                 "name": repositoryName,
                 "description": f"Template repository for {fixedName}",
-                "private": True,
+                "private": False,
                 "auto_init": True,  
                 "is_template":True
             }
