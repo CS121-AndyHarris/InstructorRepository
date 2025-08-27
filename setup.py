@@ -205,6 +205,7 @@ def addWorkFlowFile(orgName,repositoryName):
     GitHub web interface. 
     """
     url = f"https://api.github.com/repos/{orgName}/{repositoryName}/contents/.github/workflows/addAutoGrade.yml"
+    print(url)
 
     with open("utils/addAutoGrade.yml","rb") as file:
         content = base64.b64encode(file.read()).decode("utf-8")
