@@ -211,7 +211,7 @@ def addWorkFlowFile(orgName,repositoryName):
 
     payload = {
         "message": "Added addAutoGrade workflow",
-        "contents": content,
+        "content": content,
         "branch": "main"
     }
 
@@ -225,21 +225,8 @@ def addWorkFlowFile(orgName,repositoryName):
     if Exceptions.validateStatusCode(response.status_code,"GitHub"):
         url = f"https://api.github.com/repos/{orgName}/{repositoryName}/contents/autoGrading/addAutoGrade.py"
 
-        payload = {
-            "message": "Added addAutoGrade.py file",
-            "contents": content,
-            "branch": "main"
-        }
-
-        headers = {
-            "Authorization": f"token {PAT_GIT}",
-            "Accept": "application/vnd.github+json"
-        }
-
         with open("addAutoGrade.py","rb") as file:
             content = base64.b64encode(file.read()).decode("utf-8")
-
-        payload["contents"] = content
 
         response = requests.put(url,headers=headers,json=payload)
 
