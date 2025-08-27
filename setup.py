@@ -198,15 +198,29 @@ def createRepositories():
                 addRepositoryVariable(assignment,orgName,repositoryName)
 
 
-def addWorkFlowFile(orgName,repositoryName):
-    """
-    Takes in a name of a repository. It will then add the
-    workflow that update the workflow that is created by 
-    GitHub once the instructor has created tests using the
-    GitHub web interface. 
-    """
+def wait_for_branch(orgName, repositoryName, headers, branch="main", max_attempts=10):
+    url = f"https://api.github.com/repos/{orgName}/{repositoryName}/branches/{branch}"
+    for attempt in range(max_attempts):
+        resp = requests.get(url, headers=headers)
+        if resp.status_code == 200:
+            return True
+        print(f"Branch {branch} not ready yet (attempt {attempt+1}), retrying in 2s...")
+        time.sleep(2)
+    return False
+
+
+def addWorkFlowFile(orgName, repositoryName):
     url = f"https://api.github.com/repos/{orgName}/{repositoryName}/contents/.github/workflows/addAutoGrade.yml"
     print(url)
+
+    headers = {
+        "Authorization": f"token {PAT_GIT}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    # ✅ Wait for main branch to be available
+    if not wait_for_branch(orgName, repositoryName, headers):
+        raise Exception("Branch 'main' never became available")
 
     with open("utils/addAutoGrade.yml","rb") as file:
         content = base64.b64encode(file.read()).decode("utf-8")
@@ -217,32 +231,17 @@ def addWorkFlowFile(orgName,repositoryName):
         "branch": "main"
     }
 
-    headers = {
-        "Authorization": f"token {PAT_GIT}",
-        "Accept": "application/vnd.github+json"
-    }
-
-    for attempt in range(5):   # try up to 5 times
-        response = requests.put(url,headers=headers,json=payload)
-        if response.status_code == 201 or response.status_code == 200:
+    for attempt in range(5):
+        response = requests.put(url, headers=headers, json=payload)
+        if response.status_code in (200,201):
             break
         else:
-            print(f"Attempt {attempt+1} failed with {response.status_code}, retrying in 2s...")
+            print(f"Attempt {attempt+1} failed: {response.status_code} {response.text}")
             time.sleep(2)
 
-
-    if Exceptions.validateStatusCode(response.status_code,"GitHub"):
-        url = f"https://api.github.com/repos/{orgName}/{repositoryName}/contents/autoGrading/addAutoGrade.py"
-
-        with open("addAutoGrade.py","rb") as file:
-            content = base64.b64encode(file.read()).decode("utf-8")
-
-        payload["content"] = content
-        payload["message"] = "Added addAutoGrade.py"
-
-        response = requests.put(url,headers=headers,json=payload)
-
+    if response.status_code not in (200,201):
         Exceptions.validateStatusCode(response.status_code,"GitHub")
+
 
 
 def addRepositoryVariable(orgName,repositoryName,assignmentName):
