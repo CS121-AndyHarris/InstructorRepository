@@ -194,7 +194,6 @@ def createRepositories():
             response = requests.post(url,headers=headers,json=payload)
             
             if Exceptions.validateStatusCode(response.status_code,"GitHub"):
-                time.sleep(2)
                 addWorkFlowFile(orgName,repositoryName)
                 addRepositoryVariable(assignment,orgName,repositoryName)
 
@@ -223,7 +222,14 @@ def addWorkFlowFile(orgName,repositoryName):
         "Accept": "application/vnd.github+json"
     }
 
-    response = requests.put(url,headers=headers,json=payload)
+    for attempt in range(5):   # try up to 5 times
+        response = requests.put(url,headers=headers,json=payload)
+        if response.status_code == 201 or response.status_code == 200:
+            break
+        else:
+            print(f"Attempt {attempt+1} failed with {response.status_code}, retrying in 2s...")
+            time.sleep(2)
+
 
     if Exceptions.validateStatusCode(response.status_code,"GitHub"):
         url = f"https://api.github.com/repos/{orgName}/{repositoryName}/contents/autoGrading/addAutoGrade.py"
