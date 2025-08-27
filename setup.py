@@ -206,7 +206,7 @@ def addWorkFlowFile(orgName,repositoryName):
     """
     url = f"https://api.github.com/repos/{orgName}/{repositoryName}/contents/.github/workflows/addAutoGrade.yml"
 
-    with open("addAutoGrade.yml","rb") as file:
+    with open("utils/addAutoGrade.yml","rb") as file:
         content = base64.b64encode(file.read()).decode("utf-8")
 
     payload = {
