@@ -1,0 +1,52 @@
+name: setup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  get_student_data:  
+    name: Get Student Data  
+    runs-on: ubuntu-latest  
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v2  
+      
+      - name: Install dependencies
+        run: |
+          pip install requests
+          pip install cryptography
+
+      - name: Run setup script
+        run: python3 setup.py
+        env:
+          COURSE_ID: ${{ secrets.COURSE_ID }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          CANVAS_TOKEN: ${{ secrets.CANVAS_TOKEN }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+          PAT_GIT: ${{ secrets.PAT_GIT }}
+          REPO_NAME: ${{ github.repository }}
+      
+      - name: Configure Git with dynamic user
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      
+      - name: Commit students.json
+        run: |
+          git add canvasData/students.json
+          git commit -m "Update students.json with new content from workflow" 
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Commit assignments.json
+        run: |
+          git add canvasData/assignments.json
+          git commit -m "Update assignments.json with new content from workflow" 
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

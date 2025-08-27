@@ -1,0 +1,30 @@
+name: Post Grade Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Post-Grade-Test:  
+    runs-on: ubuntu-latest  
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v2
+
+      - name: Run Sample Test
+        run: |
+          curl -X POST -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.PAT_GIT }}" \
+            https://api.github.com/repos/CS121-AndyHarris/InstructorRepository/dispatches \
+            -d '{
+                  "event_type":"calc-and-post-grades",
+                  "client_payload": {
+                    "testResults": [
+                      "pass","pass","fail","pass","pass","pass","fail"
+                    ],
+                    "points": [50,20,10,3,3,3,3],
+                    "comment": "Preliminary grade done by autograder. Waiting for instructor review",
+                    "assignmentName": "(lab) Linux, vim, and git",
+                    "triggeredBy": "Test GitHub username"
+                  }
+                }'

@@ -1,0 +1,35 @@
+name: Add Auto Grade File
+
+on:
+  push:
+    paths:
+      - ".github/workflow/classroom.yml"
+
+jobs:
+  add-autoGrade:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Python script
+        run: |
+          cd utils
+          python3 addAutoGrade.py
+        env:
+          REPO_NAME: ${{ github.repository }}
+
+      - name: Configure Git with dynamic user
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Commit students.json
+        run: |
+          git add canvasData/students.json
+          git commit -m "Update classroom.yml with autograding feature" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ASSIGNMENT_NAME: ${{ vars.ASSIGNMENT_NAME }}

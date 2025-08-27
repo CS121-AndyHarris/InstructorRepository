@@ -1,0 +1,44 @@
+name: Update Database
+
+on:
+  repository_dispatch:
+    types: 
+      - "Update Database"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set the client_payload as an environment variable
+        run: |
+          echo "CLIENT_PAYLOAD=$(echo '${{ toJson(github.event.client_payload) }}' | base64 -w0)" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          pip install cryptography
+
+      - name: Run update database script
+        run: python3 updateDatabase.py
+        env:
+          CLIENT_PAYLOAD: ${{ env.CLIENT_PAYLOAD }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }} 
+      
+      - name: Configure Git with dynamic user
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      
+      - name: Commit students.json
+        run: |
+          git add canvasData/students.json
+          git commit -m "Update students.json with new content activated from google form" 
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

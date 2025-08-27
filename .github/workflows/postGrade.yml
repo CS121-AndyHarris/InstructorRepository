@@ -1,0 +1,32 @@
+name: Post Grade
+
+on:
+  repository_dispatch:
+    types: 
+      - "calc-and-post-grades"
+
+permissions:
+  contents: write
+
+jobs:
+  Calculate-and-Post-Grade:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set the client_payload as an environment variable
+        run: |
+          echo "CLIENT_PAYLOAD=$(echo '${{ toJson(github.event.client_payload) }}' | base64 -w0)" >> $GITHUB_ENV
+      
+      - name: Install configurations
+        run: pip install requests
+      
+      - name: Calculate and Post Grades
+        run: python3 calculateScore.py
+        env:
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+          COURSE_ID: ${{ secrets.COURSE_ID }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          CANVAS_TOKEN: ${{ secrets.CANVAS_TOKEN }}
