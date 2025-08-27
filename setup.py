@@ -228,6 +228,9 @@ def addWorkFlowFile(orgName,repositoryName):
         with open("addAutoGrade.py","rb") as file:
             content = base64.b64encode(file.read()).decode("utf-8")
 
+        payload["content"] = content
+        payload["message"] = "Added addAutoGrade.py"
+
         response = requests.put(url,headers=headers,json=payload)
 
         Exceptions.validateStatusCode(response.status_code,"GitHub")
