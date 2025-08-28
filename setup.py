@@ -195,7 +195,7 @@ def createRepositories():
             
             if Exceptions.validateStatusCode(response.status_code,"GitHub"):
                 addWorkFlowFile(orgName,repositoryName)
-                addRepositoryVariable(orgName,assignment,repositoryName)
+                addRepositoryVariable(orgName,repositoryName,assignment)
 
 
 def wait_for_branch(orgName, repositoryName, headers, branch="main", max_attempts=10):
@@ -263,7 +263,7 @@ def addRepositoryVariable(orgName,repositoryName,assignmentName):
         "Accept": "application/vnd.github+json"
     }
 
-    response = requests.put(url,headers=headers,json=payload)
+    response = requests.post(url,headers=headers,json=payload)
 
     Exceptions.validateStatusCode(response.status_code,"Github")
 
