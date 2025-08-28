@@ -263,7 +263,7 @@ def addRepositoryVariable(orgName,repositoryName,assignmentName):
         "Accept": "application/vnd.github+json"
     }
 
-    response = requests.post(url,headers=headers,json=payload)
+    response = requests.put(url,headers=headers,json=payload)
 
     Exceptions.validateStatusCode(response.status_code,"Github")
 
