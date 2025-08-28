@@ -250,7 +250,7 @@ def addRepositoryVariable(orgName,repositoryName,assignmentName):
     script can access it. 
     """
 
-    url = f"https://api.github.com/repos/{orgName}/{repositoryName}/actions/variables/ASSIGNMENT_NAME"
+    url = f"https://api.github.com/repos/{orgName}/{repositoryName}/actions/variables"
 
     payload = {
         "name":"ASSIGNMENT_NAME",
