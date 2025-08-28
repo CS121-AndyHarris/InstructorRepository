@@ -211,7 +211,6 @@ def wait_for_branch(orgName, repositoryName, headers, branch="main", max_attempt
 
 def addWorkFlowFile(orgName, repositoryName):
     url = f"https://api.github.com/repos/{orgName}/{repositoryName}/contents/.github/workflows/addAutoGrade.yml"
-    print(url)
 
     headers = {
         "Authorization": f"token {PAT_GIT}",
@@ -265,7 +264,7 @@ def addRepositoryVariable(orgName,repositoryName,assignmentName):
 
     response = requests.put(url,headers=headers,json=payload)
     print(f"GitHub addRepositoryVariable response: {response.status_code} {response.text}")
-    print("url")
+    print(url)
 
     Exceptions.validateStatusCode(response.status_code,"Github")
 
