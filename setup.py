@@ -264,6 +264,7 @@ def addRepositoryVariable(orgName,repositoryName,assignmentName):
     }
 
     response = requests.put(url,headers=headers,json=payload)
+    print(f"GitHub addRepositoryVariable response: {response.status_code} {response.text}")
 
     Exceptions.validateStatusCode(response.status_code,"Github")
 
