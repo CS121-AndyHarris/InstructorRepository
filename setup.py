@@ -195,7 +195,7 @@ def createRepositories():
             
             if Exceptions.validateStatusCode(response.status_code,"GitHub"):
                 addWorkFlowFile(orgName,repositoryName)
-                addRepositoryVariable(assignment,orgName,repositoryName)
+                addRepositoryVariable(orgName,assignment,repositoryName)
 
 
 def wait_for_branch(orgName, repositoryName, headers, branch="main", max_attempts=10):
