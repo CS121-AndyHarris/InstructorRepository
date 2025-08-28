@@ -262,7 +262,7 @@ def addRepositoryVariable(orgName,repositoryName,assignmentName):
         "Accept": "application/vnd.github+json, application/vnd.github.actions-variable-preview+json"
     }
 
-    response = requests.put(url,headers=headers,json=payload)
+    response = requests.post(url,headers=headers,json=payload)
     print(f"GitHub addRepositoryVariable response: {response.status_code} {response.text}")
     print(url)
 
