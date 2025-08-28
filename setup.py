@@ -259,7 +259,7 @@ def addRepositoryVariable(orgName,repositoryName,assignmentName):
 
     headers = {
         "Authorization": f"token {PAT_GIT}",
-        "Accept": "application/vnd.github+json"
+        "Accept": "application/vnd.github+json, application/vnd.github.actions-variable-preview+json"
     }
 
     response = requests.put(url,headers=headers,json=payload)
