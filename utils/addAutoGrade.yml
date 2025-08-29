@@ -3,7 +3,7 @@ name: Add Auto Grade File
 on:
   push:
     paths:
-      - ".github/workflow/classroom.yml"
+      - ".github/workflows/classroom.yml"
 
 jobs:
   add-autoGrade:
